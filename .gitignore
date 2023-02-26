@@ -3,6 +3,7 @@
 
 # directory
 node_modules
+dist
 
 # file
 .clasp.json
