@@ -10,7 +10,7 @@ const START_COLUMN_NUM = 1;
  * @param entityType EntityType
  */
 export function saveTopDataToSheet(
-  data: Spotify.Track[],
+  data: SpotifyApi.ArtistObjectFull[] | SpotifyApi.TrackObjectFull[],
   entityType: EntityType
 ): void {
   // 変数の宣言
@@ -79,17 +79,19 @@ export function saveTrackDataToSheet(data: any): void {
  * @param data
  * @reaturn values
  */
-function _createArtistsValues(data: any): string[][] {
-  const values = data.map((elm: any, i: number): string[] => {
-    return [
-      i + 1,
-      elm.id,
-      elm.name,
-      elm.genres.join(','),
-      elm.popularity,
-      elm.followers.total,
-    ];
-  });
+function _createArtistsValues(data: any[]): string[][] {
+  const values = data.map(
+    (elm: SpotifyApi.ArtistObjectFull, i: number): string[] => {
+      return [
+        String(i + 1),
+        elm.id,
+        elm.name,
+        elm.genres.join(','),
+        String(elm.popularity),
+        String(elm.followers.total),
+      ];
+    }
+  );
   return values;
 }
 
@@ -98,19 +100,21 @@ function _createArtistsValues(data: any): string[][] {
  * @param data
  * @reaturn values
  */
-function _createTracksValues(data: any): string[][] {
-  const values = data.map((elm: any, i: number): string[] => {
-    return [
-      i + 1,
-      elm.id,
-      elm.name,
-      elm.artists.map((a: any) => a.name).join(','),
-      elm.popularity,
-      `${Math.floor(elm.duration_ms / 1000 / 60) % 60}:${String(
-        Math.floor(elm.duration_ms / 1000) % 60
-      ).padStart(2, '0')}`,
-    ];
-  });
+function _createTracksValues(data: any[]): string[][] {
+  const values = data.map(
+    (elm: SpotifyApi.TrackObjectFull, i: number): string[] => {
+      return [
+        String(i + 1),
+        elm.id,
+        elm.name,
+        elm.artists.map((a: any) => a.name).join(','),
+        String(elm.popularity),
+        `${Math.floor(elm.duration_ms / 1000 / 60) % 60}:${String(
+          Math.floor(elm.duration_ms / 1000) % 60
+        ).padStart(2, '0')}`,
+      ];
+    }
+  );
   return values;
 }
 
@@ -122,7 +126,7 @@ function _createTracksValues(data: any): string[][] {
 function _createPlaylistTrackValues(data: any): string[][] {
   let id = 0;
   const nestedValues = data.map((playlist: any) => {
-    return playlist.tracks.map((track: any) => {
+    return playlist.tracks.map((track: SpotifyApi.TrackObjectFull) => {
       id++;
       return [id, playlist.name, track.name, track.artists];
     });

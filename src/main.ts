@@ -15,8 +15,16 @@ function main(): void {
   const accessToken = getAccessToken();
 
   // データの取得
-  const artistsData = getTopItems(accessToken, EntityType.artists, TIME_RANGE);
-  const tracksData = getTopItems(accessToken, EntityType.tracks, TIME_RANGE);
+  const artistsData: SpotifyApi.ArtistObjectFull[] = getTopItems(
+    accessToken,
+    EntityType.artists,
+    TIME_RANGE
+  );
+  const tracksData: SpotifyApi.TrackObjectFull[] = getTopItems(
+    accessToken,
+    EntityType.tracks,
+    TIME_RANGE
+  );
 
   // スプレッドシートへの書き込み
   saveTopDataToSheet(artistsData, EntityType.artists);

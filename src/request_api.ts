@@ -32,7 +32,7 @@ export function getTopItems(
   };
   const response = UrlFetchApp.fetch(url, options);
 
-  const items: Spotify.Track[] = JSON.parse(response.getContentText()).items;
+  const items = JSON.parse(response.getContentText()).items;
   return items;
 }
 
@@ -91,14 +91,18 @@ export function getPlaylistInfo(accessToken: string, paylistId: string) {
     },
   };
   const response = UrlFetchApp.fetch(url, options);
-  const content = JSON.parse(response.getContentText());
+  const content: SpotifyApi.PlaylistObjectFull = JSON.parse(
+    response.getContentText()
+  );
 
   const { name } = content;
-  const tracks = content.tracks.items.map((i: any) => i.track);
+  const tracks: SpotifyApi.TrackObjectFull[] = content.tracks.items.map(
+    (i: any) => i.track
+  );
 
   return {
     name,
-    tracks: tracks.map((t: any) => {
+    tracks: tracks.map((t: SpotifyApi.TrackObjectFull) => {
       return {
         name: t.name,
         artists: t.artists.map((a: any) => a.name).join(','),
